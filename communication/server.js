@@ -12,8 +12,8 @@ const defaultOptions = {
   connectionMaxTries: 5,
   connectionTriesDelay: 1000,
   unicodeKeyboard: false,
-  resetKeyboard: false
-
+  resetKeyboard: false,
+  adbBin: "adb"
 };
 
 const getPath = relativePath => path.join(path.dirname(fs.realpathSync(__filename)), relativePath);
