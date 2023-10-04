@@ -2,7 +2,7 @@ const proc = require('child_process');
 
 class Setup {
 
-  constructor (apks, options, keyboardApk, adbBin) {
+  constructor (apks, options, keyboardApk) {
 
     this._apks = apks;
     this._port = options.port;
@@ -11,7 +11,7 @@ class Setup {
     this._keyboardApk = keyboardApk;
     this._installKeyboard = options.unicodeKeyboard;
     this._resetKeyboard = options.resetKeyboard;
-    this._adbBin = adbBin
+    this._adbBin = options.adbBin
 
   }
 
