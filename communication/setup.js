@@ -2,7 +2,7 @@ const proc = require('child_process');
 
 class Setup {
 
-  constructor (apks, options, keyboardApk) {
+  constructor (apks, options, keyboardApk, adbBin) {
 
     this._apks = apks;
     this._port = options.port;
@@ -11,6 +11,7 @@ class Setup {
     this._keyboardApk = keyboardApk;
     this._installKeyboard = options.unicodeKeyboard;
     this._resetKeyboard = options.resetKeyboard;
+    this._adbBin = adbBin
 
   }
 
@@ -46,7 +47,7 @@ class Setup {
 
       for (const index in this._apks) {
 
-        proc.execSync(['adb']
+        proc.execSync([this._adbBin]
           .concat(this._serialArr())
           .concat(['install -t -r'])
           .concat([this._apks[index]]).join(' '));
@@ -54,7 +55,7 @@ class Setup {
       }
       if (this._installKeyboard && !installedApps.keyboardApp) {
 
-        proc.execSync(['adb']
+        proc.execSync([this._adbBin]
           .concat(this._serialArr())
           .concat(['install -t -r'])
           .concat([this._keyboardApk]).join(' '));
@@ -75,7 +76,7 @@ class Setup {
 
     try {
 
-      const packages = new String(proc.execSync(['adb']
+      const packages = new String(proc.execSync([this._adbBin]
         .concat(this._serialArr())
         .concat(['shell pm list packages'])
         .join(' ')))
@@ -114,7 +115,7 @@ class Setup {
 
       if (app) {
 
-        proc.execSync(['adb']
+        proc.execSync([this._adbBin]
           .concat(this._serialArr())
           .concat(['shell pm uninstall com.github.uiautomator'])
           .join(' '));
@@ -123,7 +124,7 @@ class Setup {
 
       if (testApp) {
 
-        proc.execSync(['adb']
+        proc.execSync([this._adbBin]
           .concat(this._serialArr())
           .concat(['shell pm uninstall com.github.uiautomator.test'])
           .join(' '));
@@ -132,7 +133,7 @@ class Setup {
 
       if (keyboardApp) {
 
-        proc.execSync(['adb']
+        proc.execSync([this._adbBin]
           .concat(this._serialArr())
           .concat(['shell pm uninstall io.appium.android.ime'])
           .join(' '));
@@ -151,7 +152,7 @@ class Setup {
 
   disableUnicodeKeyboard () {
 
-    proc.execSync(['adb']
+    proc.execSync([this._adbBin]
       .concat(this._serialArr())
       .concat(['shell ime disable io.appium.android.ime/.UnicodeIME'])
       .join(' '));
@@ -160,12 +161,12 @@ class Setup {
 
   enableUnicodeKeyboard () {
 
-    proc.execSync(['adb']
+    proc.execSync([this._adbBin]
       .concat(this._serialArr())
       .concat(['shell ime enable io.appium.android.ime/.UnicodeIME'])
       .join(' '));
 
-    proc.execSync(['adb']
+    proc.execSync([this._adbBin]
       .concat(this._serialArr())
       .concat(['shell ime set io.appium.android.ime/.UnicodeIME'])
       .join(' '));
@@ -176,7 +177,7 @@ class Setup {
 
     try {
 
-      proc.execSync(['adb']
+      proc.execSync([this._adbBin]
         .concat(this._serialArr())
         .concat(['forward', `tcp:${this._port}`, `tcp:${this._devicePort}`]).join(' '));
 
@@ -192,7 +193,7 @@ class Setup {
 
     try {
 
-      this._uiautomator_process = proc.spawn('adb', this._serialArr().concat(['shell', 'am', 'instrument', '-w',
+      this._uiautomator_process = proc.spawn(this._adbBin, this._serialArr().concat(['shell', 'am', 'instrument', '-w',
         'com.github.uiautomator.test/android.support.test.runner.AndroidJUnitRunner'
       ]));
 
